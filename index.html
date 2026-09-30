@@ -69,9 +69,40 @@
       transition: clip-path 500ms var(--ease-enter);
     }
     .uline.is-shown::after { clip-path: inset(0); }
-    .progress { position: fixed; z-index: 80; inset: 0 0 auto; height: 2px; pointer-events: none; }
+    .progress { position: fixed; z-index: 100; inset: 0 0 auto; height: 2px; pointer-events: none; }
     .progress__bar { width: 0; height: 100%; background: var(--orange); }
-    .rail { position: fixed; z-index: 70; top: 50%; right: 20px; display: none; flex-direction: column; gap: 13px; transform: translateY(-50%); }
+    .sitebar {
+      position: fixed;
+      z-index: 90;
+      top: 2px;
+      right: 0;
+      left: 0;
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 var(--pad);
+      border-bottom: 1px solid var(--bar-rule);
+      background: var(--bar-bg);
+      color: var(--bar-fg);
+      transition: color 500ms var(--ease-enter), background 500ms var(--ease-enter), border-color 500ms var(--ease-enter);
+    }
+    .sitebar[data-theme="paper"] { --bar-bg: #fff; --bar-fg: var(--black); --bar-rule: var(--rule); }
+    .sitebar[data-theme="sage"], .sitebar[data-theme="mist"], .sitebar[data-theme="orange"] { --bar-bg: var(--bar-color); --bar-fg: var(--black); --bar-rule: rgba(0, 0, 0, .18); }
+    .sitebar[data-theme="sage"] { --bar-color: var(--sage); }
+    .sitebar[data-theme="mist"] { --bar-color: var(--mist); }
+    .sitebar[data-theme="orange"] { --bar-color: var(--orange); }
+    .sitebar[data-theme="ink"] { --bar-bg: var(--black); --bar-fg: #fff; --bar-rule: rgba(255, 255, 255, .2); }
+    .sitebar__brand { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; }
+    .sitebar__monogram { font-family: var(--font-display); font-size: 22px; }
+    .sitebar__section { color: inherit; font-size: 10px; opacity: .72; }
+    .sitebar__menu { display: inline-flex; align-items: center; gap: 12px; padding: 8px 0 8px 12px; border: 0; background: none; color: inherit; cursor: pointer; font-size: 12px; }
+    .menu-icon { display: grid; width: 22px; gap: 5px; }
+    .menu-icon i { display: block; width: 100%; height: 1px; background: currentColor; transition: transform var(--t-fast) var(--ease-react); }
+    .sitebar__menu:hover .menu-icon i:first-child { transform: translateX(-4px); }
+    .sitebar__menu:hover .menu-icon i:last-child { transform: translateX(4px); }
+    .rail { position: fixed; z-index: 80; top: 50%; right: 20px; display: none; flex-direction: column; gap: 13px; transform: translateY(-50%); }
     .rail__dot {
       position: relative;
       width: 9px;
@@ -102,8 +133,29 @@
     .rail__dot:hover::after, .rail__dot:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
     .rail__dot:hover, .rail__dot.is-on { background: var(--orange); transform: scale(1.3); }
     .rail__dot:focus-visible, .button:focus-visible, .project-card:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+    .nav-overlay { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 28px var(--pad) 34px; overflow: auto; border: 0; background: var(--black); color: #fff; }
+    .nav-overlay[open] { display: flex; flex-direction: column; animation: menu-enter 500ms var(--ease-enter) both; }
+    .nav-overlay::backdrop { background: var(--black); }
+    @keyframes menu-enter { from { opacity: 0; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0); } }
+    .nav-overlay__top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 22px; border-bottom: 1px solid rgba(255, 255, 255, .2); font-size: 11px; }
+    .nav-overlay__close { width: 42px; height: 42px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 50%; background: none; color: inherit; cursor: pointer; font-size: 24px; line-height: 1; transition: color var(--t-fast) var(--ease-react), background var(--t-fast) var(--ease-react), transform var(--t-fast) var(--ease-react); }
+    .nav-overlay__close:hover { transform: rotate(90deg); color: var(--black); background: var(--orange); }
+    .nav-overlay__body { display: grid; flex: 1; grid-template-columns: 1fr minmax(0, 2fr); gap: 36px; align-items: center; padding: 36px 0; }
+    .nav-overlay__caption { align-self: start; color: rgba(255, 255, 255, .58); font-size: 13px; }
+    .nav-overlay__links { display: grid; }
+    .nav-overlay__link { display: grid; grid-template-columns: 54px minmax(0, 1fr) 32px; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255, 255, 255, .2); font-family: var(--font-display); font-size: 42px; line-height: 1.18; }
+    .nav-overlay__number { color: rgba(255, 255, 255, .5); font-family: var(--font-body); font-size: 11px; }
+    .nav-overlay__arrow { justify-self: end; color: var(--orange); font-family: var(--font-body); font-size: 20px; opacity: 0; transform: translateX(-8px); transition: opacity var(--t-fast) var(--ease-react), transform var(--t-fast) var(--ease-react); }
+    .nav-overlay__link:hover .nav-overlay__arrow, .nav-overlay__link:focus-visible .nav-overlay__arrow { opacity: 1; transform: translateX(0); }
+    .nav-overlay__bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .65); font-size: 12px; }
+    .quick-contact { position: fixed; z-index: 78; right: 24px; bottom: 22px; display: inline-flex; min-height: 48px; align-items: center; gap: 18px; padding: 0 18px; background: var(--orange); color: var(--black); font-size: 12px; font-weight: 700; opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity var(--t-page) var(--ease-enter), transform var(--t-page) var(--ease-enter); }
+    .quick-contact.is-visible { opacity: 1; pointer-events: auto; transform: none; }
+    .quick-contact__arrow { font-size: 18px; transition: transform var(--t-fast) var(--ease-react); }
+    .quick-contact:hover .quick-contact__arrow { transform: translate(3px, -3px); }
+    .hero[id], .section[id] { scroll-margin-top: 64px; }
 
     .hero { display: flex; min-height: 100svh; flex-direction: column; justify-content: space-between; }
+    .hero > .wrap:first-child { padding-top: 60px; }
     .hero__bar { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--rule); }
     .hero__bar--bottom { border-top: 1px solid var(--rule); border-bottom: 0; }
     .hero__status { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; }
@@ -114,7 +166,10 @@
     .hero__name { font-size: 142px; line-height: .98; }
     .hero__role { display: flex; align-items: baseline; gap: 12px; margin-top: 22px; font-size: 24px; }
     .hero__role-label { color: var(--muted); }
-    .hero__role-text { color: var(--orange); }
+    .role-rotator { display: inline-grid; color: var(--orange); vertical-align: bottom; }
+    .role-word { grid-area: 1 / 1; clip-path: inset(0 100% 0 0); transition: clip-path 620ms var(--ease-enter); white-space: nowrap; }
+    .role-word.is-on { clip-path: inset(0); }
+    .role-word.is-out { clip-path: inset(0 0 0 100%); }
     .hero__summary { max-width: 610px; margin-top: 26px; color: var(--muted); font-size: 17px; }
     .hero__meta { display: flex; flex-wrap: wrap; gap: 9px 24px; margin-top: 26px; color: var(--muted); font-size: 12px; }
     .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
@@ -174,10 +229,18 @@
     .experience-extra h3 { margin-bottom: 10px; font-size: 20px; }
     .experience-extra p { color: var(--muted); font-size: 13px; }
 
-    .project-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
-    .project-intro p { max-width: 410px; color: var(--muted); font-size: 13px; }
-    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-    .project-card { width: 100%; height: 430px; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; perspective: 1100px; text-align: left; }
+    .project-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+    .project-intro p { max-width: 510px; color: var(--muted); font-size: 13px; }
+    .project-toolbar { display: flex; align-items: center; gap: 18px; }
+    .project-count { min-width: 104px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+    .project-controls { display: flex; gap: 8px; }
+    .project-control { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--rule); background: transparent; color: inherit; cursor: pointer; font-size: 18px; transition: color var(--t-fast) var(--ease-react), background var(--t-fast) var(--ease-react), opacity var(--t-fast) var(--ease-react); }
+    .project-control:hover:not(:disabled) { background: var(--orange); color: var(--black); }
+    .project-control:disabled { cursor: default; opacity: .35; }
+    .project-viewport { overflow: hidden; touch-action: pan-y; cursor: grab; }
+    .project-viewport:active { cursor: grabbing; }
+    .project-grid { display: flex; gap: 20px; transition: transform 700ms var(--ease-enter); will-change: transform; }
+    .project-card { flex: 0 0 calc((100% - 20px) / 2); width: calc((100% - 20px) / 2); height: 430px; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; perspective: 1100px; text-align: left; }
     .project-card__inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 800ms var(--ease-enter); }
     .project-card.is-flipped .project-card__inner { transform: rotateY(180deg); }
     .project-card__face { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--rule); background: var(--surface); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -209,8 +272,10 @@
     .project-card__field dd { margin: 3px 0 0; font-size: 13px; }
     @media (hover: hover) and (pointer: fine) {
       .project-card:hover .project-card__inner { transform: rotateY(180deg); }
-      .project-card.is-flipped:hover .project-card__inner { transform: rotateY(0); }
     }
+    .project-pagination { display: flex; gap: 8px; justify-content: center; margin-top: 22px; }
+    .project-page { width: 38px; height: 34px; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--muted); cursor: pointer; font-size: 10px; font-variant-numeric: tabular-nums; transition: color var(--t-fast) var(--ease-react), border-color var(--t-fast) var(--ease-react); }
+    .project-page[aria-current="step"] { border-color: var(--orange); color: var(--fg); }
 
     .skill-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
     .skill-label { padding-top: 11px; border-top: 1px solid var(--rule); font-size: 13px; font-weight: 700; }
@@ -275,21 +340,33 @@
       .experience-extra { grid-template-columns: 1fr; }
       .project-intro { align-items: flex-start; flex-direction: column; }
       .project-grid { grid-template-columns: 1fr; gap: 14px; }
-      .project-card { height: 400px; }
+      .project-card { flex-basis: 100%; width: 100%; height: 400px; }
       .skill-group { grid-template-columns: 1fr; gap: 7px; }
       .contact-title { font-size: 52px; }
       .contact-row { grid-template-columns: 70px minmax(0, 1fr); }
       .footer { flex-direction: column; }
+      .sitebar { gap: 10px; }
+      .sitebar__section { display: none; }
+      .nav-overlay { padding-top: 18px; }
+      .nav-overlay__body { grid-template-columns: 1fr; gap: 22px; align-content: center; }
+      .nav-overlay__caption { display: none; }
+      .nav-overlay__link { grid-template-columns: 34px minmax(0, 1fr) 22px; gap: 8px; padding: 12px 0; font-size: 31px; }
+      .nav-overlay__bottom { flex-direction: column; gap: 6px; }
+      .project-intro { align-items: flex-start; flex-direction: column; }
+      .project-toolbar { width: 100%; justify-content: space-between; }
+      .quick-contact { right: 14px; bottom: 14px; min-height: 44px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
       .has-motion [data-reveal] { opacity: 1; transform: none; }
       .uline::after { clip-path: inset(0); }
+      .role-word:not(.is-on) { display: none; }
+      .role-word.is-on { display: block; clip-path: inset(0); }
     }
     @media print {
       @page { size: A4; margin: 14mm; }
       html, body { color: #000 !important; background: #fff !important; font-size: 10pt; }
-      .progress, .rail, .hero__actions, .breath, .project-card__hint, .marquee { display: none !important; }
+      .progress, .rail, .sitebar, .nav-overlay, .quick-contact, .hero__actions, .breath, .project-card__hint, .project-toolbar, .project-pagination, .marquee { display: none !important; }
       .section, .hero, .footer { color: #000 !important; background: #fff !important; break-inside: auto; }
       .section__inner { padding: 24px 0 !important; }
       .hero { min-height: 0 !important; }
@@ -298,6 +375,8 @@
       .hero__summary, .contact-copy, .timeline__desc, .project-card__field dd { color: #333 !important; }
       .about-grid, .experience-columns, .contact-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
       .project-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .project-viewport { overflow: visible; }
+      .project-grid { display: grid !important; transform: none !important; }
       .project-card { height: auto !important; perspective: none !important; break-inside: avoid; }
       .project-card__inner { height: auto !important; transform: none !important; transform-style: flat !important; }
       .project-card__face { position: static !important; min-height: 0; padding: 10px; border-color: #ccc !important; color: #000 !important; background: #fff !important; backface-visibility: visible !important; }
@@ -311,6 +390,29 @@
 </head>
 <body>
   <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress-bar"></div></div>
+  <header class="sitebar" id="sitebar" data-theme="paper">
+    <a class="sitebar__brand" href="#home" aria-label="王崧，返回首页"><span class="sitebar__monogram">W.S.</span><span>PORTFOLIO / 2026</span></a>
+    <span class="sitebar__section" id="current-section">00 / PROFILE</span>
+    <button class="sitebar__menu" id="menu-open" type="button" aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false">
+      <span>目录</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </header>
+  <dialog class="nav-overlay" id="site-menu" aria-labelledby="menu-title">
+    <div class="nav-overlay__top"><span id="menu-title">王崧 / 个人简历</span><button class="nav-overlay__close" id="menu-close" type="button" aria-label="关闭目录">×</button></div>
+    <div class="nav-overlay__body">
+      <p class="nav-overlay__caption">ART TECHNOLOGY<br>CREATIVE PRACTICE<br>SHENZHEN · HONG KONG</p>
+      <nav class="nav-overlay__links" aria-label="简历目录">
+        <a class="nav-overlay__link" data-menu-target="home" href="#home"><span class="nav-overlay__number">00</span><span>首页</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+        <a class="nav-overlay__link" data-menu-target="about" href="#about"><span class="nav-overlay__number">01</span><span>个人简介</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+        <a class="nav-overlay__link" data-menu-target="experience" href="#experience"><span class="nav-overlay__number">02</span><span>教育与经历</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+        <a class="nav-overlay__link" data-menu-target="portfolio" href="#portfolio"><span class="nav-overlay__number">03</span><span>作品集</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+        <a class="nav-overlay__link" data-menu-target="skills" href="#skills"><span class="nav-overlay__number">04</span><span>技能</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+        <a class="nav-overlay__link" data-menu-target="contact" href="#contact"><span class="nav-overlay__number">05</span><span>联系</span><span class="nav-overlay__arrow" aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+    <div class="nav-overlay__bottom"><a href="mailto:songwang3@ln.hk">songwang3@ln.hk</a><span>中国香港 · 深圳</span></div>
+  </dialog>
+  <a class="quick-contact" id="quick-contact" href="#contact"><span>联系王崧</span><span class="quick-contact__arrow" aria-hidden="true">↗</span></a>
   <nav class="rail" aria-label="页面导航">
     <button class="rail__dot is-on" type="button" data-to="home" data-label="首页" aria-label="前往首页"></button>
     <button class="rail__dot" type="button" data-to="about" data-label="简介" aria-label="前往个人简介"></button>
@@ -331,7 +433,7 @@
     <div class="wrap hero__mid">
       <p class="hero__kicker" data-reveal>艺术科技与商业 · MSc ATB</p>
       <h1 class="hero__name"><span class="uline" data-hero-underline>王崧</span></h1>
-      <p class="hero__role"><span class="hero__role-label">期望方向</span><span class="hero__role-text">数字媒体与内容创作</span></p>
+      <p class="hero__role"><span class="hero__role-label">期望方向</span><span class="role-rotator" id="role-rotator" aria-live="off"><span class="role-word is-on">数字媒体与内容创作</span><span class="role-word" aria-hidden="true">文创 IP 与数字内容</span><span class="role-word" aria-hidden="true">艺术科技实践</span></span></p>
       <p class="hero__summary" data-reveal style="--delay: 120ms">从环境设计出发，关注艺术科技、文化创意产业与数字内容表达。希望将空间与视觉设计经验，延展到更丰富的创作媒介中。</p>
       <div class="hero__meta" data-reveal style="--delay: 220ms">
         <span>岭南大学 MSc ATB 在读</span>
@@ -404,8 +506,9 @@
     <section class="section theme-ink" id="portfolio">
       <div class="wrap section__inner">
         <div class="section__head"><span class="eyebrow">03 — 作品集</span><h2 class="section__title"><span class="uline" data-underline>为作品留出位置</span></h2></div>
-        <div class="project-intro"><p>每张作品卡都预留了图片、标题与项目说明位置。添加自己的作品图片与文字后，即可作为作品集展示。</p><p>点击或悬停卡片翻面查看可填充的信息字段。</p></div>
-        <div class="project-grid">
+        <div class="project-intro"><p>以图像、标题与简短说明，呈现空间、模型或数字内容项目。</p><div class="project-toolbar"><span class="project-count" id="project-count" aria-live="polite">作品 01–02 / 04</span><div class="project-controls"><button class="project-control" id="project-prev" type="button" aria-label="上一组作品" title="上一组作品" disabled>←</button><button class="project-control" id="project-next" type="button" aria-label="下一组作品" title="下一组作品">→</button></div></div></div>
+        <div class="project-viewport" id="project-viewport" tabindex="0" role="region" aria-roledescription="carousel" aria-label="作品集">
+        <div class="project-grid" id="project-track">
           <button class="project-card" type="button" aria-label="作品集占位 01，点击查看待补充字段" aria-pressed="false">
             <span class="project-card__inner">
               <span class="project-card__face">
@@ -437,6 +540,12 @@
               <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 04</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
             </span>
           </button>
+        </div></div>
+        <div class="project-pagination" id="project-pagination" role="group" aria-label="选择作品">
+          <button class="project-page" type="button" data-slide-to="0" aria-label="显示作品 01" aria-current="step">01</button>
+          <button class="project-page" type="button" data-slide-to="1" aria-label="显示作品 02">02</button>
+          <button class="project-page" type="button" data-slide-to="2" aria-label="显示作品 03">03</button>
+          <button class="project-page" type="button" data-slide-to="3" aria-label="显示作品 04">04</button>
         </div>
       </div>
     </section>
@@ -485,6 +594,43 @@
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var underlineTargets = document.querySelectorAll('[data-underline], [data-hero-underline]');
       var revealTargets = document.querySelectorAll('[data-reveal]');
+      var roleWords = Array.prototype.slice.call(document.querySelectorAll('.role-word'));
+      var roleIndex = 0;
+
+      roleWords.forEach(function (word, index) { word.setAttribute('aria-hidden', String(index !== 0)); });
+      if (!reduceMotion && roleWords.length > 1) {
+        window.setInterval(function () {
+          var previous = roleWords[roleIndex];
+          previous.classList.remove('is-on');
+          previous.classList.add('is-out');
+          previous.setAttribute('aria-hidden', 'true');
+          roleIndex = (roleIndex + 1) % roleWords.length;
+          var next = roleWords[roleIndex];
+          next.classList.remove('is-out');
+          next.classList.add('is-on');
+          next.setAttribute('aria-hidden', 'false');
+          window.setTimeout(function () { previous.classList.remove('is-out'); }, 650);
+        }, 3200);
+      }
+
+      var menuDialog = document.getElementById('site-menu');
+      var menuOpen = document.getElementById('menu-open');
+      var menuClose = document.getElementById('menu-close');
+      menuOpen.addEventListener('click', function () { menuDialog.showModal(); menuOpen.setAttribute('aria-expanded', 'true'); });
+      menuClose.addEventListener('click', function () { menuDialog.close(); });
+      menuDialog.addEventListener('close', function () { menuOpen.setAttribute('aria-expanded', 'false'); });
+      menuDialog.addEventListener('click', function (event) { if (event.target === menuDialog) menuDialog.close(); });
+      document.querySelectorAll('[data-menu-target]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          var target = document.getElementById(link.getAttribute('data-menu-target'));
+          menuDialog.close();
+          if (target) {
+            history.replaceState(null, '', '#' + target.id);
+            target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+          }
+        });
+      });
 
       function revealAll() {
         revealTargets.forEach(function (element) { element.classList.add('is-in'); });
@@ -538,28 +684,123 @@
           if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         });
       });
-      if ('IntersectionObserver' in window) {
-        var sections = navDots.map(function (button) { return document.getElementById(button.getAttribute('data-to')); }).filter(Boolean);
-        var sectionObserver = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              navDots.forEach(function (button) {
-                button.classList.toggle('is-on', button.getAttribute('data-to') === entry.target.id);
-              });
-            }
-          });
-        }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-        sections.forEach(function (section) { sectionObserver.observe(section); });
+      var sections = navDots.map(function (button) { return document.getElementById(button.getAttribute('data-to')); }).filter(Boolean);
+      var sitebar = document.getElementById('sitebar');
+      var sectionName = document.getElementById('current-section');
+      var quickContact = document.getElementById('quick-contact');
+      var sectionMeta = {
+        home: { theme: 'paper', label: '00 / PROFILE' },
+        about: { theme: 'sage', label: '01 / PROFILE' },
+        experience: { theme: 'paper', label: '02 / EXPERIENCE' },
+        portfolio: { theme: 'ink', label: '03 / PORTFOLIO' },
+        skills: { theme: 'mist', label: '04 / SKILLS' },
+        contact: { theme: 'orange', label: '05 / CONTACT' }
+      };
+      var sectionUpdateQueued = false;
+      function updateActiveSection() {
+        sectionUpdateQueued = false;
+        var center = window.innerHeight / 2;
+        var activeSection = sections[0];
+        var closestDistance = Infinity;
+        sections.forEach(function (section) {
+          var bounds = section.getBoundingClientRect();
+          var distance = center < bounds.top ? bounds.top - center : center > bounds.bottom ? center - bounds.bottom : 0;
+          if (distance < closestDistance) { closestDistance = distance; activeSection = section; }
+        });
+        if (!activeSection) return;
+        navDots.forEach(function (button) {
+          button.classList.toggle('is-on', button.getAttribute('data-to') === activeSection.id);
+        });
+        var active = sectionMeta[activeSection.id];
+        if (active) {
+          sitebar.setAttribute('data-theme', active.theme);
+          sectionName.textContent = active.label;
+          quickContact.classList.toggle('is-visible', activeSection.id !== 'home' && activeSection.id !== 'contact');
+        }
+      }
+      function queueSectionUpdate() {
+        if (sectionUpdateQueued) return;
+        sectionUpdateQueued = true;
+        window.requestAnimationFrame(updateActiveSection);
+      }
+      window.addEventListener('scroll', queueSectionUpdate, { passive: true });
+      window.addEventListener('resize', queueSectionUpdate, { passive: true });
+      updateActiveSection();
+
+      var projectViewport = document.getElementById('project-viewport');
+      var projectTrack = document.getElementById('project-track');
+      var projectCards = Array.prototype.slice.call(document.querySelectorAll('.project-card'));
+      var projectPages = Array.prototype.slice.call(document.querySelectorAll('.project-page'));
+      var projectPrevious = document.getElementById('project-prev');
+      var projectNext = document.getElementById('project-next');
+      var projectCount = document.getElementById('project-count');
+      var projectIndex = 0;
+      var swipeStart = null;
+      var suppressCardClick = false;
+
+      function visibleProjects() { return window.matchMedia('(min-width: 820px)').matches ? 2 : 1; }
+      function updateProjectCarousel() {
+        if (!projectCards.length) return;
+        var visible = visibleProjects();
+        var maxIndex = Math.max(0, projectCards.length - visible);
+        projectIndex = Math.min(projectIndex, maxIndex);
+        var gap = parseFloat(window.getComputedStyle(projectTrack).gap) || 0;
+        var step = projectCards[0].getBoundingClientRect().width + gap;
+        projectTrack.style.transform = 'translateX(-' + (projectIndex * step) + 'px)';
+        projectPrevious.disabled = projectIndex === 0;
+        projectNext.disabled = projectIndex >= maxIndex;
+        var lastVisible = Math.min(projectIndex + visible, projectCards.length);
+        projectCount.textContent = '作品 ' + String(projectIndex + 1).padStart(2, '0') + '–' + String(lastVisible).padStart(2, '0') + ' / ' + String(projectCards.length).padStart(2, '0');
+        projectPages.forEach(function (page, index) {
+          if (index === projectIndex) page.setAttribute('aria-current', 'step');
+          else page.removeAttribute('aria-current');
+        });
+      }
+      function moveProjectCarousel(amount) {
+        var maxIndex = Math.max(0, projectCards.length - visibleProjects());
+        projectIndex = Math.max(0, Math.min(maxIndex, projectIndex + amount));
+        updateProjectCarousel();
       }
 
-      document.querySelectorAll('.project-card').forEach(function (card) {
+      projectPrevious.addEventListener('click', function () { moveProjectCarousel(-1); });
+      projectNext.addEventListener('click', function () { moveProjectCarousel(1); });
+      projectPages.forEach(function (page) {
+        page.addEventListener('click', function () {
+          projectIndex = Number(page.getAttribute('data-slide-to'));
+          updateProjectCarousel();
+        });
+      });
+      projectViewport.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowLeft') { event.preventDefault(); moveProjectCarousel(-1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); moveProjectCarousel(1); }
+      });
+      projectViewport.addEventListener('pointerdown', function (event) { if (event.pointerType === 'touch') swipeStart = event.clientX; });
+      projectViewport.addEventListener('pointerup', function (event) {
+        if (swipeStart === null) return;
+        var distance = event.clientX - swipeStart;
+        swipeStart = null;
+        if (Math.abs(distance) > 48) {
+          suppressCardClick = true;
+          moveProjectCarousel(distance < 0 ? 1 : -1);
+          window.setTimeout(function () { suppressCardClick = false; }, 250);
+        }
+      });
+      window.addEventListener('resize', updateProjectCarousel, { passive: true });
+      if ('ResizeObserver' in window) {
+        var projectResizeObserver = new ResizeObserver(updateProjectCarousel);
+        projectResizeObserver.observe(projectViewport);
+      }
+
+      projectCards.forEach(function (card) {
         card.addEventListener('click', function () {
+          if (suppressCardClick) return;
           var flipped = card.classList.toggle('is-flipped');
           card.setAttribute('aria-pressed', String(flipped));
           var index = card.querySelector('.project-card__index').textContent.trim();
           card.setAttribute('aria-label', '作品集占位 ' + index + (flipped ? '，显示项目说明字段' : '，点击查看待补充字段'));
         });
       });
+      updateProjectCarousel();
     })();
   </script>
 </body>
