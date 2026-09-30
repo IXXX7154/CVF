@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="王崧的个人简历，关注艺术科技、数字媒体与内容创作。">
+  <title>王崧 · 艺术科技与数字内容</title>
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --grey: #6b6b6b;
+      --orange: #f4793a;
+      --sage: #8e9487;
+      --mist: #8498ac;
+      --rule: #e4e1dc;
+      --ease-enter: cubic-bezier(.55, 0, .1, 1);
+      --ease-react: cubic-bezier(.25, .74, .22, .99);
+      --t-fast: 300ms;
+      --t-page: 700ms;
+      --font-display: "Source Han Serif SC", "Songti SC", "Noto Serif SC", Georgia, serif;
+      --font-body: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --pad: clamp(20px, 5vw, 72px);
+      --max-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      color: var(--black);
+      background: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { color: var(--black); background: var(--orange); }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.12; }
+    .wrap { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 var(--pad); }
+    .eyebrow { color: var(--muted, var(--grey)); font-size: 11px; font-weight: 600; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; font-variant-numeric: tabular-nums; }
+    .rule { height: 1px; border: 0; background: var(--rule); }
+    .section { position: relative; color: var(--fg); background: var(--bg); }
+    .theme-paper { --bg: var(--white); --fg: var(--black); --muted: var(--grey); --rule: #e4e1dc; --surface: #f5f3f0; }
+    .theme-sage { --bg: var(--sage); --fg: var(--black); --muted: rgba(0, 0, 0, .66); --rule: rgba(0, 0, 0, .2); --surface: rgba(0, 0, 0, .07); }
+    .theme-ink { --bg: var(--black); --fg: #f7f6f4; --muted: rgba(255, 255, 255, .68); --rule: rgba(255, 255, 255, .18); --surface: rgba(255, 255, 255, .055); }
+    .theme-mist { --bg: var(--mist); --fg: var(--black); --muted: rgba(0, 0, 0, .66); --rule: rgba(0, 0, 0, .2); --surface: rgba(0, 0, 0, .07); }
+    .theme-orange { --bg: var(--orange); --fg: var(--black); --muted: rgba(0, 0, 0, .7); --rule: rgba(0, 0, 0, .22); --surface: rgba(0, 0, 0, .07); }
+    .section__inner { padding: 112px 0; }
+    .section__head { display: grid; gap: 10px; margin-bottom: 52px; }
+    .section__title { max-width: 960px; font-size: 58px; }
+    .section__lead { max-width: 690px; margin-top: 16px; color: var(--muted); font-size: 15px; }
+    .uline { position: relative; display: inline-block; }
+    .uline::after {
+      position: absolute;
+      right: 0;
+      bottom: -.08em;
+      left: 0;
+      height: 3px;
+      background: currentColor;
+      clip-path: inset(0 100% 0 0);
+      content: "";
+      transition: clip-path 500ms var(--ease-enter);
+    }
+    .uline.is-shown::after { clip-path: inset(0); }
+    .progress { position: fixed; z-index: 80; inset: 0 0 auto; height: 2px; pointer-events: none; }
+    .progress__bar { width: 0; height: 100%; background: var(--orange); }
+    .rail { position: fixed; z-index: 70; top: 50%; right: 20px; display: none; flex-direction: column; gap: 13px; transform: translateY(-50%); }
+    .rail__dot {
+      position: relative;
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(10, 10, 10, .25);
+      cursor: pointer;
+      transition: background var(--t-fast) var(--ease-react), transform var(--t-fast) var(--ease-react);
+    }
+    .rail__dot::after {
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      padding: 4px 9px;
+      border: 1px solid var(--rule);
+      background: var(--white);
+      color: var(--black);
+      content: attr(data-label);
+      font-size: 11px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(5px, -50%);
+      transition: opacity var(--t-fast) var(--ease-react), transform var(--t-fast) var(--ease-react);
+      white-space: nowrap;
+    }
+    .rail__dot:hover::after, .rail__dot:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+    .rail__dot:hover, .rail__dot.is-on { background: var(--orange); transform: scale(1.3); }
+    .rail__dot:focus-visible, .button:focus-visible, .project-card:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+
+    .hero { display: flex; min-height: 100svh; flex-direction: column; justify-content: space-between; }
+    .hero__bar { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--rule); }
+    .hero__bar--bottom { border-top: 1px solid var(--rule); border-bottom: 0; }
+    .hero__status { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; }
+    .breath { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); animation: breathe 1.8s ease-in-out infinite; }
+    @keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+    .hero__mid { display: flex; flex: 1; flex-direction: column; justify-content: center; padding-top: 64px; padding-bottom: 64px; }
+    .hero__kicker { margin-bottom: 14px; color: var(--muted); font-size: 13px; }
+    .hero__name { font-size: 142px; line-height: .98; }
+    .hero__role { display: flex; align-items: baseline; gap: 12px; margin-top: 22px; font-size: 24px; }
+    .hero__role-label { color: var(--muted); }
+    .hero__role-text { color: var(--orange); }
+    .hero__summary { max-width: 610px; margin-top: 26px; color: var(--muted); font-size: 17px; }
+    .hero__meta { display: flex; flex-wrap: wrap; gap: 9px 24px; margin-top: 26px; color: var(--muted); font-size: 12px; }
+    .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .button {
+      position: relative;
+      z-index: 0;
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 20px;
+      overflow: hidden;
+      border: 1px solid currentColor;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .button::before {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: var(--orange);
+      content: "";
+      opacity: 0;
+      transform: scaleX(.42);
+      transform-origin: left;
+      transition: transform var(--t-fast) var(--ease-react), opacity var(--t-fast) var(--ease-react);
+    }
+    .button:hover::before, .button:focus-visible::before { opacity: 1; transform: scaleX(1); }
+    .button__arrow { transition: transform var(--t-fast) var(--ease-react); }
+    .button:hover .button__arrow { transform: translateX(4px); }
+    .hero__bottom-note { color: var(--muted); font-size: 11px; }
+
+    .about-grid { display: grid; grid-template-columns: 1.35fr .8fr; gap: 64px; align-items: start; }
+    .about-copy { max-width: 730px; font-size: 18px; }
+    .about-copy p + p { margin-top: 18px; }
+    .about-aside { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+    .about-fact { display: flex; justify-content: space-between; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+    .about-fact span:first-child { color: var(--muted); }
+    .about-note { margin-top: 46px; padding: 16px 20px; border-left: 3px solid var(--orange); background: var(--surface); font-size: 14px; }
+
+    .experience-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+    .subhead { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+    .subhead h3 { font-size: 24px; }
+    .subhead span { color: var(--muted); font-size: 11px; }
+    .timeline { margin: 0; padding: 0; list-style: none; }
+    .timeline__item { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+    .timeline__date { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .timeline__title { font-size: 19px; font-weight: 700; line-height: 1.35; }
+    .timeline__org { margin-top: 3px; color: var(--muted); font-size: 13px; }
+    .timeline__desc { margin-top: 12px; color: var(--muted); font-size: 13px; }
+    .timeline__desc li + li { margin-top: 6px; }
+    .experience-extra { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 64px; }
+    .experience-extra article { padding-top: 18px; border-top: 1px solid var(--rule); }
+    .experience-extra h3 { margin-bottom: 10px; font-size: 20px; }
+    .experience-extra p { color: var(--muted); font-size: 13px; }
+
+    .project-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+    .project-intro p { max-width: 410px; color: var(--muted); font-size: 13px; }
+    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .project-card { width: 100%; height: 430px; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; perspective: 1100px; text-align: left; }
+    .project-card__inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 800ms var(--ease-enter); }
+    .project-card.is-flipped .project-card__inner { transform: rotateY(180deg); }
+    .project-card__face { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--rule); background: var(--surface); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .project-card__back { transform: rotateY(180deg); }
+    .image-slot {
+      position: relative;
+      display: grid;
+      min-height: 245px;
+      flex: 1;
+      place-items: center;
+      overflow: hidden;
+      border: 1px dashed rgba(255, 255, 255, .35);
+      background-color: rgba(255, 255, 255, .025);
+      background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .image-slot::before, .image-slot::after { position: absolute; width: 44px; height: 1px; background: rgba(255, 255, 255, .45); content: ""; }
+    .image-slot::after { transform: rotate(90deg); }
+    .image-slot__label { position: absolute; right: 12px; bottom: 10px; color: var(--muted); font-size: 10px; }
+    .image-slot__center { z-index: 1; color: var(--muted); font-size: 12px; }
+    .project-card__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 16px; }
+    .project-card__title { font-family: var(--font-display); font-size: 23px; }
+    .project-card__index { color: var(--muted); font-size: 11px; }
+    .project-card__hint { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .project-card__back .project-card__title { margin-top: 18px; }
+    .project-card__fields { display: grid; gap: 14px; margin-top: 22px; }
+    .project-card__field { padding-top: 9px; border-top: 1px solid var(--rule); }
+    .project-card__field dt { color: var(--muted); font-size: 10px; }
+    .project-card__field dd { margin: 3px 0 0; font-size: 13px; }
+    @media (hover: hover) and (pointer: fine) {
+      .project-card:hover .project-card__inner { transform: rotateY(180deg); }
+      .project-card.is-flipped:hover .project-card__inner { transform: rotateY(0); }
+    }
+
+    .skill-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
+    .skill-label { padding-top: 11px; border-top: 1px solid var(--rule); font-size: 13px; font-weight: 700; }
+    .skill-groups { display: grid; gap: 28px; }
+    .skill-group { display: grid; grid-template-columns: 145px minmax(0, 1fr); gap: 20px; padding-top: 12px; border-top: 1px solid var(--rule); }
+    .skill-group h3 { font-family: var(--font-body); font-size: 12px; }
+    .skill-group p { color: var(--muted); font-size: 14px; }
+    .marquee { display: flex; margin-top: 56px; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .marquee + .marquee { margin-top: 12px; }
+    .marquee__track { display: flex; width: max-content; flex: 0 0 auto; gap: 10px; padding-right: 10px; animation: marquee 44s linear infinite; }
+    .marquee--slow .marquee__track { animation-duration: 58s; animation-direction: reverse; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    .chip { padding: 9px 14px; border: 1px solid var(--rule); font-size: 12px; white-space: nowrap; transition: opacity var(--t-fast) var(--ease-react), background var(--t-fast) var(--ease-react); }
+    @media (hover: hover) and (pointer: fine) {
+      .marquee:has(.chip:hover) .marquee__track { animation-play-state: paused; }
+      .marquee:has(.chip:hover) .chip:not(:hover) { opacity: .18; }
+      .chip:hover { background: rgba(255, 255, 255, .35); }
+    }
+
+    .contact-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 64px; align-items: start; }
+    .contact-title { font-size: 82px; }
+    .contact-copy { max-width: 490px; margin-top: 18px; color: var(--muted); font-size: 15px; }
+    .contact-list { margin: 0; padding: 0; border-top: 1px solid var(--rule); list-style: none; }
+    .contact-row { display: grid; grid-template-columns: 94px minmax(0, 1fr); gap: 12px; padding: 17px 0; border-bottom: 1px solid var(--rule); }
+    .contact-row dt { color: var(--muted); font-size: 11px; }
+    .contact-row dd { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
+    .contact-link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    .footer { display: flex; justify-content: space-between; gap: 16px; padding: 24px 0; border-top: 1px solid var(--rule); color: var(--muted); font-size: 11px; }
+    [data-reveal] { opacity: 1; transform: none; }
+    .has-motion [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity var(--t-page) var(--ease-enter), transform var(--t-page) var(--ease-enter); transition-delay: var(--delay, 0ms); }
+    .has-motion [data-reveal].is-in { opacity: 1; transform: none; }
+
+    @media (min-width: 1100px) { .rail { display: flex; } }
+    @media (min-width: 820px) {
+      .section__head { grid-template-columns: 170px minmax(0, 1fr); gap: 40px; align-items: start; }
+      .section__head .eyebrow { position: sticky; top: 80px; }
+    }
+    @media (max-width: 819px) {
+      .section__inner { padding: 76px 0; }
+      .section__head { margin-bottom: 34px; }
+      .section__title { font-size: 42px; }
+      .hero__name { font-size: 88px; }
+      .hero__role { font-size: 19px; }
+      .hero__summary { font-size: 15px; }
+      .about-grid, .experience-columns, .contact-grid { grid-template-columns: 1fr; gap: 38px; }
+      .experience-extra { gap: 28px; }
+      .skill-layout { grid-template-columns: 1fr; gap: 22px; }
+      .project-card { height: 390px; }
+      .image-slot { min-height: 205px; }
+      .contact-title { font-size: 62px; }
+    }
+    @media (max-width: 560px) {
+      .hero__bar { flex-wrap: wrap; }
+      .hero__bar { min-height: 58px; }
+      .hero__bar .eyebrow:last-child { text-align: right; }
+      .hero__name { font-size: 68px; }
+      .hero__role { align-items: flex-start; flex-direction: column; gap: 0; font-size: 18px; }
+      .hero__meta { gap: 8px 16px; }
+      .section__title { font-size: 36px; }
+      .about-copy { font-size: 16px; }
+      .timeline__item { grid-template-columns: 1fr; gap: 5px; }
+      .experience-extra { grid-template-columns: 1fr; }
+      .project-intro { align-items: flex-start; flex-direction: column; }
+      .project-grid { grid-template-columns: 1fr; gap: 14px; }
+      .project-card { height: 400px; }
+      .skill-group { grid-template-columns: 1fr; gap: 7px; }
+      .contact-title { font-size: 52px; }
+      .contact-row { grid-template-columns: 70px minmax(0, 1fr); }
+      .footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+      .has-motion [data-reveal] { opacity: 1; transform: none; }
+      .uline::after { clip-path: inset(0); }
+    }
+    @media print {
+      @page { size: A4; margin: 14mm; }
+      html, body { color: #000 !important; background: #fff !important; font-size: 10pt; }
+      .progress, .rail, .hero__actions, .breath, .project-card__hint, .marquee { display: none !important; }
+      .section, .hero, .footer { color: #000 !important; background: #fff !important; break-inside: auto; }
+      .section__inner { padding: 24px 0 !important; }
+      .hero { min-height: 0 !important; }
+      .hero__mid { padding: 26px 0 !important; }
+      .hero__name { font-size: 38pt !important; }
+      .hero__summary, .contact-copy, .timeline__desc, .project-card__field dd { color: #333 !important; }
+      .about-grid, .experience-columns, .contact-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .project-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .project-card { height: auto !important; perspective: none !important; break-inside: avoid; }
+      .project-card__inner { height: auto !important; transform: none !important; transform-style: flat !important; }
+      .project-card__face { position: static !important; min-height: 0; padding: 10px; border-color: #ccc !important; color: #000 !important; background: #fff !important; backface-visibility: visible !important; }
+      .project-card__back { margin-top: 6px; transform: none !important; }
+      .image-slot { min-height: 70px; background: #fff !important; border-color: #aaa !important; }
+      .image-slot::before, .image-slot::after { background: #777 !important; }
+      .footer { padding: 12px 0; }
+      a { text-decoration: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress-bar"></div></div>
+  <nav class="rail" aria-label="页面导航">
+    <button class="rail__dot is-on" type="button" data-to="home" data-label="首页" aria-label="前往首页"></button>
+    <button class="rail__dot" type="button" data-to="about" data-label="简介" aria-label="前往个人简介"></button>
+    <button class="rail__dot" type="button" data-to="experience" data-label="经历" aria-label="前往教育与经历"></button>
+    <button class="rail__dot" type="button" data-to="portfolio" data-label="作品" aria-label="前往作品集"></button>
+    <button class="rail__dot" type="button" data-to="skills" data-label="技能" aria-label="前往技能"></button>
+    <button class="rail__dot" type="button" data-to="contact" data-label="联系" aria-label="前往联系方式"></button>
+  </nav>
+
+  <header class="hero section theme-paper" id="home">
+    <div class="wrap">
+      <div class="hero__bar">
+        <span class="eyebrow">个人简历 · 2026</span>
+        <span class="hero__status"><i class="breath" aria-hidden="true"></i>探索数字内容创作方向</span>
+        <span class="eyebrow">中国香港 · 深圳</span>
+      </div>
+    </div>
+    <div class="wrap hero__mid">
+      <p class="hero__kicker" data-reveal>艺术科技与商业 · MSc ATB</p>
+      <h1 class="hero__name"><span class="uline" data-hero-underline>王崧</span></h1>
+      <p class="hero__role"><span class="hero__role-label">期望方向</span><span class="hero__role-text">数字媒体与内容创作</span></p>
+      <p class="hero__summary" data-reveal style="--delay: 120ms">从环境设计出发，关注艺术科技、文化创意产业与数字内容表达。希望将空间与视觉设计经验，延展到更丰富的创作媒介中。</p>
+      <div class="hero__meta" data-reveal style="--delay: 220ms">
+        <span>岭南大学 MSc ATB 在读</span>
+        <span>广东东软学院 · 环境设计</span>
+        <span>普通话 · 英语 IELTS 5.5</span>
+      </div>
+      <div class="hero__actions" data-reveal style="--delay: 300ms">
+        <button class="button" type="button" onclick="window.print()">打印 / 导出 PDF <span class="button__arrow" aria-hidden="true">↓</span></button>
+        <a class="button" href="#portfolio">浏览作品预留区 <span class="button__arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <div class="wrap"><div class="hero__bar hero__bar--bottom"><span class="hero__bottom-note">艺术科技 · 文化创意 · 数字媒体</span><span class="hero__bottom-note">向下浏览 ↓</span></div></div>
+  </header>
+
+  <main>
+    <section class="section theme-sage" id="about">
+      <div class="wrap section__inner">
+        <div class="section__head"><span class="eyebrow">01 — 个人简介</span><h2 class="section__title"><span class="uline" data-underline>让设计走向新的媒介</span></h2></div>
+        <div class="about-grid">
+          <div class="about-copy" data-reveal>
+            <p>香港岭南大学艺术科技与商业硕士在读，本科毕业于广东东软学院环境设计专业，具备空间与视觉设计基础。</p>
+            <p>熟悉 CAD、3DMAX、Photoshop、SketchUp 等设计工具及视频剪辑软件，关注如何将艺术设计思维融入数字内容创作。希望在导师指导下，将创作兴趣转化为职业路径，持续探索数字内容与文创产业。</p>
+          </div>
+          <div class="about-aside" data-reveal style="--delay: 120ms">
+            <div class="about-fact"><span>期望方向</span><span>数字媒体与内容创作</span></div>
+            <div class="about-fact"><span>学习领域</span><span>艺术科技 · 文化创意</span></div>
+            <div class="about-fact"><span>本科专业</span><span>环境设计</span></div>
+            <div class="about-fact"><span>毕业设计</span><span>儿童友好广场设计</span></div>
+          </div>
+        </div>
+        <div class="about-note" data-reveal>兴趣延伸：拼装模型与喷涂、游戏、视频剪辑，以及文创 IP 与数字媒体内容。</div>
+      </div>
+    </section>
+
+    <section class="section theme-paper" id="experience">
+      <div class="wrap section__inner">
+        <div class="section__head"><span class="eyebrow">02 — 教育与经历</span><h2 class="section__title"><span class="uline" data-underline>在学习与实践中累积</span></h2></div>
+        <div class="experience-columns">
+          <div>
+            <div class="subhead"><h3>教育背景</h3><span>EDUCATION</span></div>
+            <ol class="timeline">
+              <li class="timeline__item" data-reveal>
+                <div class="timeline__date">2026.09 — 2027.07</div>
+                <div><h4 class="timeline__title">艺术科技与商业 MSc ATB</h4><p class="timeline__org">香港岭南大学</p><p class="timeline__desc">主攻艺术科技与文化创意产业。</p></div>
+              </li>
+              <li class="timeline__item" data-reveal>
+                <div class="timeline__date">2021.09 — 2025.07</div>
+                <div><h4 class="timeline__title">环境设计 · 本科</h4><p class="timeline__org">广东东软学院</p><p class="timeline__desc">毕业设计：《五感疗愈视域下儿童友好广场设计研究》</p></div>
+              </li>
+            </ol>
+          </div>
+          <div>
+            <div class="subhead"><h3>实习经历</h3><span>EXPERIENCE</span></div>
+            <ol class="timeline">
+              <li class="timeline__item" data-reveal>
+                <div class="timeline__date">2024.07</div>
+                <div><h4 class="timeline__title">设计师助理</h4><p class="timeline__org">维意定制</p><ul class="timeline__desc"><li>协助完成定制家具方案设计与效果图制作，绘制 CAD 施工图纸。</li><li>参与客户需求沟通与现场量房跟进。</li></ul></div>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="experience-extra">
+          <article data-reveal><h3>项目实践 · 2024 — 2025</h3><p>毕业设计《五感疗愈视域下儿童友好广场设计研究》。围绕儿童友好理念，从视觉、听觉、触觉、嗅觉、味觉五感视角开展空间设计研究，完成场地调研、方案设计与成果表达。</p></article>
+          <article data-reveal style="--delay: 100ms"><h3>校园经历 · 2022 — 2025</h3><p>大学生服务中心副社长，协助统筹日常运营与学生事务，组织协调校园活动的策划与执行。</p></article>
+        </div>
+        <div class="about-note" data-reveal style="margin-top: 30px"><strong>获奖与证书</strong>　雅思 IELTS 5.5</div>
+      </div>
+    </section>
+
+    <section class="section theme-ink" id="portfolio">
+      <div class="wrap section__inner">
+        <div class="section__head"><span class="eyebrow">03 — 作品集</span><h2 class="section__title"><span class="uline" data-underline>为作品留出位置</span></h2></div>
+        <div class="project-intro"><p>每张作品卡都预留了图片、标题与项目说明位置。添加自己的作品图片与文字后，即可作为作品集展示。</p><p>点击或悬停卡片翻面查看可填充的信息字段。</p></div>
+        <div class="project-grid">
+          <button class="project-card" type="button" aria-label="作品集占位 01，点击查看待补充字段" aria-pressed="false">
+            <span class="project-card__inner">
+              <span class="project-card__face">
+                <span class="image-slot" role="img" aria-label="作品图片预留位 01"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 01</span></span>
+                <span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">01</span></span>
+                <span class="project-card__hint">作品图片 · 项目标题 · 时间</span>
+              </span>
+              <span class="project-card__face project-card__back">
+                <span class="project-card__index">PROJECT / 01</span><span class="project-card__title">项目说明待补充</span>
+                <dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl>
+              </span>
+            </span>
+          </button>
+          <button class="project-card" type="button" aria-label="作品集占位 02，点击查看待补充字段" aria-pressed="false">
+            <span class="project-card__inner">
+              <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 02"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 02</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">02</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
+              <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 02</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
+            </span>
+          </button>
+          <button class="project-card" type="button" aria-label="作品集占位 03，点击查看待补充字段" aria-pressed="false">
+            <span class="project-card__inner">
+              <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 03"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 03</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">03</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
+              <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 03</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
+            </span>
+          </button>
+          <button class="project-card" type="button" aria-label="作品集占位 04，点击查看待补充字段" aria-pressed="false">
+            <span class="project-card__inner">
+              <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 04"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 04</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">04</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
+              <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 04</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section theme-mist" id="skills">
+      <div class="wrap section__inner">
+        <div class="section__head"><span class="eyebrow">04 — 技能</span><h2 class="section__title"><span class="uline" data-underline>从空间设计到数字表达</span></h2></div>
+        <div class="skill-layout">
+          <div class="skill-label">工具与兴趣</div>
+          <div class="skill-groups">
+            <div class="skill-group"><h3>设计软件</h3><p>CAD · 3DMAX · Photoshop · SketchUp · 美间</p></div>
+            <div class="skill-group"><h3>视频剪辑</h3><p>剪映 · Adobe Premiere Pro</p></div>
+            <div class="skill-group"><h3>语言</h3><p>普通话（母语） · 英语（IELTS 5.5）</p></div>
+            <div class="skill-group"><h3>兴趣方向</h3><p>高达模型制作与喷涂 · 游戏 · 视频剪辑 · 文创 IP</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="marquee" aria-label="设计软件技能">
+        <div class="marquee__track"><span class="chip">CAD</span><span class="chip">3DMAX</span><span class="chip">Photoshop</span><span class="chip">SketchUp</span><span class="chip">美间</span><span class="chip">CAD</span><span class="chip">3DMAX</span><span class="chip">Photoshop</span><span class="chip">SketchUp</span><span class="chip">美间</span></div>
+      </div>
+      <div class="marquee marquee--slow" aria-label="创作兴趣">
+        <div class="marquee__track"><span class="chip">数字媒体</span><span class="chip">文化创意</span><span class="chip">模型制作与喷涂</span><span class="chip">视频剪辑</span><span class="chip">游戏</span><span class="chip">数字媒体</span><span class="chip">文化创意</span><span class="chip">模型制作与喷涂</span><span class="chip">视频剪辑</span><span class="chip">游戏</span></div>
+      </div>
+    </section>
+
+    <section class="section theme-orange" id="contact">
+      <div class="wrap section__inner">
+        <div class="section__head"><span class="eyebrow">05 — 联系</span></div>
+        <div class="contact-grid">
+          <div><h2 class="contact-title"><span class="uline" data-underline>聊聊创作？</span></h2><p class="contact-copy">期待交流艺术科技、数字媒体与文化创意内容，也欢迎了解作品集更新。</p></div>
+          <dl class="contact-list">
+            <div class="contact-row"><dt>邮箱</dt><dd><a class="contact-link" href="mailto:songwang3@ln.hk">songwang3@ln.hk</a></dd></div>
+            <div class="contact-row"><dt>电话</dt><dd><a class="contact-link" href="tel:+8613048889898">+86 130 4888 9898</a><br><a class="contact-link" href="tel:+85266755882">+852 6675 5882</a></dd></div>
+            <div class="contact-row"><dt>所在地</dt><dd>中国香港 · 深圳</dd></div>
+            <div class="contact-row"><dt>方向</dt><dd>数字媒体与内容创作</dd></div>
+          </dl>
+        </div>
+        <footer class="footer" style="margin-top: 72px"><span>王崧 · 个人简历</span><span>按 Ctrl / Cmd + P 导出 PDF</span></footer>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var underlineTargets = document.querySelectorAll('[data-underline], [data-hero-underline]');
+      var revealTargets = document.querySelectorAll('[data-reveal]');
+
+      function revealAll() {
+        revealTargets.forEach(function (element) { element.classList.add('is-in'); });
+        underlineTargets.forEach(function (element) { element.classList.add('is-shown'); });
+      }
+
+      if (!reduceMotion && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('has-motion');
+        var revealObserver = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+        revealTargets.forEach(function (element) { revealObserver.observe(element); });
+
+        var underlineObserver = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-shown');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.4 });
+        underlineTargets.forEach(function (element) { underlineObserver.observe(element); });
+      } else {
+        revealAll();
+      }
+
+      var progressBar = document.getElementById('progress-bar');
+      var ticking = false;
+      function updateProgress() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function () {
+          var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+          var progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+          progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
+      var navDots = Array.prototype.slice.call(document.querySelectorAll('.rail__dot'));
+      navDots.forEach(function (button) {
+        button.addEventListener('click', function () {
+          var target = document.getElementById(button.getAttribute('data-to'));
+          if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        });
+      });
+      if ('IntersectionObserver' in window) {
+        var sections = navDots.map(function (button) { return document.getElementById(button.getAttribute('data-to')); }).filter(Boolean);
+        var sectionObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              navDots.forEach(function (button) {
+                button.classList.toggle('is-on', button.getAttribute('data-to') === entry.target.id);
+              });
+            }
+          });
+        }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+        sections.forEach(function (section) { sectionObserver.observe(section); });
+      }
+
+      document.querySelectorAll('.project-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var flipped = card.classList.toggle('is-flipped');
+          card.setAttribute('aria-pressed', String(flipped));
+          var index = card.querySelector('.project-card__index').textContent.trim();
+          card.setAttribute('aria-label', '作品集占位 ' + index + (flipped ? '，显示项目说明字段' : '，点击查看待补充字段'));
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
