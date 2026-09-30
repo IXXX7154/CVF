@@ -71,6 +71,29 @@
     .uline.is-shown::after { clip-path: inset(0); }
     .progress { position: fixed; z-index: 100; inset: 0 0 auto; height: 2px; pointer-events: none; }
     .progress__bar { width: 0; height: 100%; background: var(--orange); }
+    .mouse-cursor {
+      position: fixed;
+      z-index: 120;
+      top: 0;
+      left: 0;
+      display: grid;
+      width: 14px;
+      height: 14px;
+      place-items: center;
+      border: 1px solid var(--black);
+      border-radius: 50%;
+      background: var(--orange);
+      color: var(--black);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(var(--cursor-x, -40px), var(--cursor-y, -40px), 0) translate(-50%, -50%);
+      transition: width 180ms var(--ease-react), height 180ms var(--ease-react), opacity 180ms var(--ease-react);
+    }
+    .mouse-cursor.is-visible { opacity: 1; }
+    .mouse-cursor.is-target { width: 70px; height: 70px; }
+    .mouse-cursor.is-down { width: 50px; height: 50px; }
+    .mouse-cursor__label { font-size: 10px; opacity: 0; transition: opacity var(--t-fast) var(--ease-react); }
+    .mouse-cursor.is-target .mouse-cursor__label { opacity: 1; }
     .sitebar {
       position: fixed;
       z-index: 90;
@@ -258,7 +281,8 @@
       background-size: 28px 28px;
     }
     .image-slot::before, .image-slot::after { position: absolute; width: 44px; height: 1px; background: rgba(255, 255, 255, .45); content: ""; }
-    .image-slot::after { transform: rotate(90deg); }
+    .image-slot::before, .image-slot::after { left: var(--pointer-x, 50%); top: var(--pointer-y, 50%); transform: translate(-50%, -50%); }
+    .image-slot::after { transform: translate(-50%, -50%) rotate(90deg); }
     .image-slot__label { position: absolute; right: 12px; bottom: 10px; color: var(--muted); font-size: 10px; }
     .image-slot__center { z-index: 1; color: var(--muted); font-size: 12px; }
     .project-card__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 16px; }
@@ -362,11 +386,12 @@
       .uline::after { clip-path: inset(0); }
       .role-word:not(.is-on) { display: none; }
       .role-word.is-on { display: block; clip-path: inset(0); }
+      .mouse-cursor { display: none !important; }
     }
     @media print {
       @page { size: A4; margin: 14mm; }
       html, body { color: #000 !important; background: #fff !important; font-size: 10pt; }
-      .progress, .rail, .sitebar, .nav-overlay, .quick-contact, .hero__actions, .breath, .project-card__hint, .project-toolbar, .project-pagination, .marquee { display: none !important; }
+      .progress, .rail, .sitebar, .nav-overlay, .quick-contact, .mouse-cursor, .hero__actions, .breath, .project-card__hint, .project-toolbar, .project-pagination, .marquee { display: none !important; }
       .section, .hero, .footer { color: #000 !important; background: #fff !important; break-inside: auto; }
       .section__inner { padding: 24px 0 !important; }
       .hero { min-height: 0 !important; }
@@ -390,10 +415,11 @@
 </head>
 <body>
   <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress-bar"></div></div>
+  <div class="mouse-cursor" id="mouse-cursor" aria-hidden="true"><span class="mouse-cursor__label" id="mouse-cursor-label"></span></div>
   <header class="sitebar" id="sitebar" data-theme="paper">
     <a class="sitebar__brand" href="#home" aria-label="王崧，返回首页"><span class="sitebar__monogram">W.S.</span><span>PORTFOLIO / 2026</span></a>
     <span class="sitebar__section" id="current-section">00 / PROFILE</span>
-    <button class="sitebar__menu" id="menu-open" type="button" aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false">
+    <button class="sitebar__menu" id="menu-open" type="button" data-cursor-label="打开" aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false">
       <span>目录</span><span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
     </button>
   </header>
@@ -412,7 +438,7 @@
     </div>
     <div class="nav-overlay__bottom"><a href="mailto:songwang3@ln.hk">songwang3@ln.hk</a><span>中国香港 · 深圳</span></div>
   </dialog>
-  <a class="quick-contact" id="quick-contact" href="#contact"><span>联系王崧</span><span class="quick-contact__arrow" aria-hidden="true">↗</span></a>
+  <a class="quick-contact" id="quick-contact" href="#contact" data-cursor-label="联系"><span>联系王崧</span><span class="quick-contact__arrow" aria-hidden="true">↗</span></a>
   <nav class="rail" aria-label="页面导航">
     <button class="rail__dot is-on" type="button" data-to="home" data-label="首页" aria-label="前往首页"></button>
     <button class="rail__dot" type="button" data-to="about" data-label="简介" aria-label="前往个人简介"></button>
@@ -506,10 +532,10 @@
     <section class="section theme-ink" id="portfolio">
       <div class="wrap section__inner">
         <div class="section__head"><span class="eyebrow">03 — 作品集</span><h2 class="section__title"><span class="uline" data-underline>为作品留出位置</span></h2></div>
-        <div class="project-intro"><p>以图像、标题与简短说明，呈现空间、模型或数字内容项目。</p><div class="project-toolbar"><span class="project-count" id="project-count" aria-live="polite">作品 01–02 / 04</span><div class="project-controls"><button class="project-control" id="project-prev" type="button" aria-label="上一组作品" title="上一组作品" disabled>←</button><button class="project-control" id="project-next" type="button" aria-label="下一组作品" title="下一组作品">→</button></div></div></div>
+        <div class="project-intro"><p>以图像、标题与简短说明，呈现空间、模型或数字内容项目。</p><div class="project-toolbar"><span class="project-count" id="project-count" aria-live="polite">作品 01–02 / 04</span><div class="project-controls"><button class="project-control" id="project-prev" type="button" data-cursor-label="上一页" aria-label="上一组作品" title="上一组作品" disabled>←</button><button class="project-control" id="project-next" type="button" data-cursor-label="下一页" aria-label="下一组作品" title="下一组作品">→</button></div></div></div>
         <div class="project-viewport" id="project-viewport" tabindex="0" role="region" aria-roledescription="carousel" aria-label="作品集">
         <div class="project-grid" id="project-track">
-          <button class="project-card" type="button" aria-label="作品集占位 01，点击查看待补充字段" aria-pressed="false">
+          <button class="project-card" type="button" data-cursor-label="翻面" aria-label="作品集占位 01，点击查看待补充字段" aria-pressed="false">
             <span class="project-card__inner">
               <span class="project-card__face">
                 <span class="image-slot" role="img" aria-label="作品图片预留位 01"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 01</span></span>
@@ -522,19 +548,19 @@
               </span>
             </span>
           </button>
-          <button class="project-card" type="button" aria-label="作品集占位 02，点击查看待补充字段" aria-pressed="false">
+          <button class="project-card" type="button" data-cursor-label="翻面" aria-label="作品集占位 02，点击查看待补充字段" aria-pressed="false">
             <span class="project-card__inner">
               <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 02"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 02</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">02</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
               <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 02</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
             </span>
           </button>
-          <button class="project-card" type="button" aria-label="作品集占位 03，点击查看待补充字段" aria-pressed="false">
+          <button class="project-card" type="button" data-cursor-label="翻面" aria-label="作品集占位 03，点击查看待补充字段" aria-pressed="false">
             <span class="project-card__inner">
               <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 03"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 03</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">03</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
               <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 03</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
             </span>
           </button>
-          <button class="project-card" type="button" aria-label="作品集占位 04，点击查看待补充字段" aria-pressed="false">
+          <button class="project-card" type="button" data-cursor-label="翻面" aria-label="作品集占位 04，点击查看待补充字段" aria-pressed="false">
             <span class="project-card__inner">
               <span class="project-card__face"><span class="image-slot" role="img" aria-label="作品图片预留位 04"><span class="image-slot__center">作品图片预留位</span><span class="image-slot__label">IMAGE / 04</span></span><span class="project-card__meta"><span class="project-card__title">作品标题待补充</span><span class="project-card__index">04</span></span><span class="project-card__hint">作品图片 · 项目标题 · 时间</span></span>
               <span class="project-card__face project-card__back"><span class="project-card__index">PROJECT / 04</span><span class="project-card__title">项目说明待补充</span><dl class="project-card__fields"><div class="project-card__field"><dt>项目背景</dt><dd>填写项目目标与背景</dd></div><div class="project-card__field"><dt>个人职责</dt><dd>填写负责内容与协作方式</dd></div><div class="project-card__field"><dt>过程与成果</dt><dd>补充设计过程、交付成果或数据</dd></div></dl></span>
@@ -542,10 +568,10 @@
           </button>
         </div></div>
         <div class="project-pagination" id="project-pagination" role="group" aria-label="选择作品">
-          <button class="project-page" type="button" data-slide-to="0" aria-label="显示作品 01" aria-current="step">01</button>
-          <button class="project-page" type="button" data-slide-to="1" aria-label="显示作品 02">02</button>
-          <button class="project-page" type="button" data-slide-to="2" aria-label="显示作品 03">03</button>
-          <button class="project-page" type="button" data-slide-to="3" aria-label="显示作品 04">04</button>
+          <button class="project-page" type="button" data-cursor-label="选择" data-slide-to="0" aria-label="显示作品 01" aria-current="step">01</button>
+          <button class="project-page" type="button" data-cursor-label="选择" data-slide-to="1" aria-label="显示作品 02">02</button>
+          <button class="project-page" type="button" data-cursor-label="选择" data-slide-to="2" aria-label="显示作品 03">03</button>
+          <button class="project-page" type="button" data-cursor-label="选择" data-slide-to="3" aria-label="显示作品 04">04</button>
         </div>
       </div>
     </section>
@@ -789,6 +815,40 @@
       if ('ResizeObserver' in window) {
         var projectResizeObserver = new ResizeObserver(updateProjectCarousel);
         projectResizeObserver.observe(projectViewport);
+      }
+
+      var mouseCursor = document.getElementById('mouse-cursor');
+      var mouseCursorLabel = document.getElementById('mouse-cursor-label');
+      if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.documentElement.classList.add('has-mouse-cursor');
+        document.addEventListener('pointermove', function (event) {
+          if (event.pointerType !== 'mouse') return;
+          mouseCursor.style.setProperty('--cursor-x', (event.clientX + 12) + 'px');
+          mouseCursor.style.setProperty('--cursor-y', (event.clientY + 12) + 'px');
+          mouseCursor.classList.add('is-visible');
+
+          var cursorTarget = event.target.closest('[data-cursor-label]');
+          mouseCursor.classList.toggle('is-target', Boolean(cursorTarget));
+          mouseCursorLabel.textContent = cursorTarget ? cursorTarget.getAttribute('data-cursor-label') : '';
+
+          var hoveredCard = event.target.closest('.project-card');
+          if (hoveredCard) {
+            var imageSlot = hoveredCard.querySelector('.image-slot');
+            var cardBounds = hoveredCard.getBoundingClientRect();
+            var pointerX = Math.max(0, Math.min(1, (event.clientX - cardBounds.left) / cardBounds.width)) * 100;
+            var pointerY = Math.max(0, Math.min(1, (event.clientY - cardBounds.top) / cardBounds.height)) * 100;
+            imageSlot.style.setProperty('--pointer-x', pointerX + '%');
+            imageSlot.style.setProperty('--pointer-y', pointerY + '%');
+          }
+        }, { passive: true });
+        document.addEventListener('pointerdown', function (event) {
+          if (event.pointerType === 'mouse') mouseCursor.classList.add('is-down');
+        });
+        document.addEventListener('pointerup', function () { mouseCursor.classList.remove('is-down'); });
+        window.addEventListener('mouseout', function (event) {
+          if (!event.relatedTarget) mouseCursor.classList.remove('is-visible', 'is-target');
+        });
+        window.addEventListener('blur', function () { mouseCursor.classList.remove('is-visible', 'is-target', 'is-down'); });
       }
 
       projectCards.forEach(function (card) {
